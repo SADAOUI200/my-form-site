@@ -210,76 +210,78 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const sections = ['section1', 'section2', 'section3', 'section4', 'meeting_participation_question', 'section5', 'financial_coverage_question', 'section6'];
-        let currentSection = 0;
-        const totalSections = sections.length;
+    const sections = ['section1', 'section2', 'section3', 'section4', 'meeting_participation_question', 'section5', 'financial_coverage_question', 'section6'];
+    let currentSection = 0;
+    const totalSections = sections.length;
 
-        function updateProgress() {
-            const progress = (currentSection / (totalSections - 1)) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressBar').innerText = Math.round(progress) + '%';
+    function updateProgress() {
+        const progress = (currentSection / (totalSections - 1)) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressBar').innerText = Math.round(progress) + '%';
+    }
+
+    function showSection(index) {
+        sections.forEach((id, i) => {
+            document.getElementById(id).style.display = i === index ? 'block' : 'none';
+        });
+        updateProgress();
+    }
+
+    function updateConditionalFields() {
+        const general = document.getElementById('general_specialty').value;
+        const inspectionSubjectDiv = document.getElementById('inspection_subject_div');
+        const specialtyDiv = document.getElementById('specialty_div');
+        
+        if (general === 'بيداغوجيا') {
+            inspectionSubjectDiv.style.display = 'block';
+            specialtyDiv.style.display = 'none';
+            document.getElementById('inspection_subject').required = true;
+            document.getElementById('specialty').required = false;
+            document.getElementById('specialty').value = '';
+        } else if (general === 'إدارة لكل المراحل /التغذية / تسيير مالي ومادي (متوسط ثانوي)') {
+            inspectionSubjectDiv.style.display = 'none';
+            specialtyDiv.style.display = 'block';
+            document.getElementById('inspection_subject').required = false;
+            document.getElementById('specialty').required = true;
+            document.getElementById('inspection_subject').value = '';
+        } else {
+            inspectionSubjectDiv.style.display = 'none';
+            specialtyDiv.style.display = 'none';
+            document.getElementById('inspection_subject').required = false;
+            document.getElementById('specialty').required = false;
+            document.getElementById('inspection_subject').value = '';
+            document.getElementById('specialty').value = '';
+        }
+    }
+
+    async function submitForm() {
+        const form = document.getElementById('myForm');
+        const messageDiv = document.getElementById('message');
+        
+        // التحقق من الحقول المطلوبة في جميع الأقسام المرئية
+        const visibleSections = sections.filter((_, i) => document.getElementById(sections[i]).style.display === 'block');
+        for (let section of visibleSections) {
+            if (!validateSection(sections.indexOf(section) + 1)) {
+                messageDiv.innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة في القسم الحالي.</div>';
+                messageDiv.style.display = 'block';
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+                return false;
+            }
         }
 
-        function showSection(index) {
-            sections.forEach((id, i) => {
-                document.getElementById(id).style.display = i === index ? 'block' : 'none';
+        try {
+            const formData = new FormData(form);
+            console.log('Submitting form data:', Object.fromEntries(formData)); // تصحيح أخطاء
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
             });
-            updateProgress();
-        }
-
-        function updateConditionalFields() {
-            const general = document.getElementById('general_specialty').value;
-            const inspectionSubjectDiv = document.getElementById('inspection_subject_div');
-            const specialtyDiv = document.getElementById('specialty_div');
-            
-            if (general === 'بيداغوجيا') {
-                inspectionSubjectDiv.style.display = 'block';
-                specialtyDiv.style.display = 'none';
-                document.getElementById('inspection_subject').required = true;
-                document.getElementById('specialty').required = false;
-                document.getElementById('specialty').value = '';
-            } else if (general === 'إدارة لكل المراحل /التغذية / تسيير مالي ومادي (متوسط ثانوي)') {
-                inspectionSubjectDiv.style.display = 'none';
-                specialtyDiv.style.display = 'block';
-                document.getElementById('inspection_subject').required = false;
-                document.getElementById('specialty').required = true;
-                document.getElementById('inspection_subject').value = '';
-            } else {
-                inspectionSubjectDiv.style.display = 'none';
-                specialtyDiv.style.display = 'none';
-                document.getElementById('inspection_subject').required = false;
-                document.getElementById('specialty').required = false;
-                document.getElementById('inspection_subject').value = '';
-                document.getElementById('specialty').value = '';
-            }
-        }
-
-        async function submitForm() {
-            const form = document.getElementById('myForm');
-            const messageDiv = document.getElementById('message');
-            
-            // التحقق من الحقول المطلوبة في جميع الأقسام المرئية
-            const visibleSections = sections.filter((_, i) => document.getElementById(sections[i]).style.display === 'block');
-            for (let section of visibleSections) {
-                if (!validateSection(sections.indexOf(section) + 1)) {
-                    messageDiv.innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة في القسم الحالي.</div>';
-                    messageDiv.style.display = 'block';
-                    setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
-                    return false;
-                }
-            }
-
-            try {
-                const formData = new FormData(form);
-                console.log('Submitting form data:', Object.fromEntries(formData)); // تصحيح أخطاء
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors' // لتجنب مشاكل CORS
-                });
-                // ملاحظة: مع 'no-cors'، لا يمكن التحقق من response.ok، لذا نعتمد على السجل
-                console.log('Submission response:', response);
+            if (response.ok) {
+                const result = await response.text();
+                console.log('Submission response:', result);
                 messageDiv.innerHTML = '<div class="alert alert-success">تم إرسال البيانات بنجاح!</div>';
                 messageDiv.style.display = 'block';
                 form.reset();
@@ -290,83 +292,90 @@
                     window.location.href = 'thankyou.html';
                 }, 2000);
                 return true;
-            } catch (error) {
-                messageDiv.innerHTML = '<div class="alert alert-danger">فشل الإرسال: ' + error.message + '</div>';
+            } else {
+                const errorText = await response.text();
+                messageDiv.innerHTML = '<div class="alert alert-danger">حدث خطأ أثناء الإرسال: ' + errorText + '</div>';
                 messageDiv.style.display = 'block';
-                console.error('Submission error:', error);
+                console.error('Submission failed:', response.status, errorText);
                 return false;
             }
+        } catch (error) {
+            messageDiv.innerHTML = '<div class="alert alert-danger">فشل الإرسال: ' + error.message + '</div>';
+            messageDiv.style.display = 'block';
+            console.error('Submission error:', error);
+            return false;
         }
+    }
 
-        function nextSection(current) {
-            if (validateSection(current)) {
-                document.getElementById('message').style.display = 'none';
-                if (current === 1) {
-                    updateConditionalFields();
-                } else if (current === 5) { // بعد سؤال الملتقيات
-                    const participation = document.querySelector('input[name="meeting_participation"]:checked');
-                    if (participation && participation.value === 'نعم') {
-                        document.getElementById('section5').style.display = 'block';
-                    } else {
-                        document.getElementById('section5').style.display = 'none';
-                        if (currentSection + 1 === 5 && participation && participation.value === 'لا') {
-                            currentSection++; // تخطي القسم الخامس
-                        }
-                    }
-                } else if (current === 7) { // بعد سؤال التغطية المالية
-                    const coverage = document.querySelector('input[name="financial_coverage"]:checked');
-                    if (coverage && coverage.value === 'نعم') {
-                        document.getElementById('section6').style.display = 'block';
-                    } else {
-                        document.getElementById('section6').style.display = 'none';
-                        if (currentSection + 1 === 7 && coverage && coverage.value === 'لا') {
-                            submitForm(); // إرسال النموذج مباشرة
-                            return;
-                        }
-                    }
-                }
-                currentSection++;
-                showSection(currentSection);
-            } else {
-                document.getElementById('message').innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة.</div>';
-                document.getElementById('message').style.display = 'block';
-                setTimeout(() => { document.getElementById('message').style.display = 'none'; }, 3000);
-            }
-        }
-
-        function prevSection(current) {
-            currentSection--;
-            showSection(currentSection);
+    function nextSection(current) {
+        if (validateSection(current)) {
             document.getElementById('message').style.display = 'none';
             if (current === 1) {
                 updateConditionalFields();
-            }
-        }
-
-        function validateSection(section) {
-            const currentSectionDiv = document.getElementById(sections[section - 1]);
-            const requiredInputs = currentSectionDiv.querySelectorAll('[required]');
-            let isValid = true;
-            for (let input of requiredInputs) {
-                if (!input.value) {
-                    input.classList.add('is-invalid');
-                    isValid = false;
+            } else if (current === 5) { // بعد سؤال الملتقيات
+                const participation = document.querySelector('input[name="meeting_participation"]:checked');
+                if (participation && participation.value === 'نعم') {
+                    document.getElementById('section5').style.display = 'block';
                 } else {
-                    input.classList.remove('is-invalid');
+                    document.getElementById('section5').style.display = 'none';
+                    if (currentSection + 1 === 5 && participation && participation.value === 'لا') {
+                        currentSection++; // تخطي القسم الخامس
+                    }
+                }
+            } else if (current === 7) { // بعد سؤال التغطية المالية
+                const coverage = document.querySelector('input[name="financial_coverage"]:checked');
+                if (coverage && coverage.value === 'نعم') {
+                    document.getElementById('section6').style.display = 'block';
+                } else {
+                    document.getElementById('section6').style.display = 'none';
+                    if (currentSection + 1 === 7 && coverage && coverage.value === 'لا') {
+                        submitForm(); // إرسال النموذج مباشرة
+                        return;
+                    }
                 }
             }
-            return isValid;
+            currentSection++;
+            showSection(currentSection);
+        } else {
+            document.getElementById('message').innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة.</div>';
+            document.getElementById('message').style.display = 'block';
+            setTimeout(() => { document.getElementById('message').style.display = 'none'; }, 3000);
         }
+    }
 
-        document.getElementById('general_specialty').addEventListener('change', updateConditionalFields);
+    function prevSection(current) {
+        currentSection--;
+        showSection(currentSection);
+        document.getElementById('message').style.display = 'none';
+        if (current === 1) {
+            updateConditionalFields();
+        }
+    }
 
-        document.getElementById('myForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            await submitForm();
-        });
+    function validateSection(section) {
+        const currentSectionDiv = document.getElementById(sections[section - 1]);
+        const requiredInputs = currentSectionDiv.querySelectorAll('[required]');
+        let isValid = true;
+        for (let input of requiredInputs) {
+            if (!input.value) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        }
+        return isValid;
+    }
 
-        updateConditionalFields();
-        showSection(0);
+    document.getElementById('general_specialty').addEventListener('change', updateConditionalFields);
+
+    document.getElementById('myForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await submitForm();
+    });
+
+    updateConditionalFields();
+    showSection(0);
     </script>
 </body>
 </html>
