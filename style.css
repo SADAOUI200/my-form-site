@@ -1,0 +1,31 @@
+body {
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.form-container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.alert {
+    margin-top: 10px;
+}
+
+.section {
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

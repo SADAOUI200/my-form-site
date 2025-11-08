@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج التفتيش</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">نموذج التفتيش</h2>
+            <p class="text-center text-muted">املأ الحقول بعناية. البيانات ستُجمع في Google Sheet.</p>
+            
+            <!-- شريط التقدم -->
+            <div class="progress mb-4">
+                <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+
+            <form id="myForm" action="https://script.google.com/macros/s/AKfycbwrKdrXSZOlIxsPg5kRWN9A_RFeXmSgUfZ83bEW2p8Q2qHSGW_eXHjT2p0Y4H0yM99wIw/exec" method="POST">
+                <!-- القسم الأول: التخصص والمرحلة -->
+                <div id="section1" class="section section-1">
+                    <h4 class="section-title">القسم الأول: المعلومات الأساسية</h4>
+                    <div class="mb-3">
+                        <label for="general_specialty" class="form-label">التخصص العام *</label>
+                        <select class="form-select" id="general_specialty" name="general_specialty" required>
+                            <option value="">اختر...</option>
+                            <option value="إدارة لكل المراحل /التغذية / تسيير مالي ومادي (متوسط ثانوي)">إدارة لكل المراحل /التغذية / تسيير مالي ومادي</option>
+                            <option value="بيداغوجيا">بيداغوجيا</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="educational_stage" class="form-label">المرحلة التعليمية *</label>
+                        <select class="form-select" id="educational_stage" name="educational_stage" required>
+                            <option value="">اختر...</option>
+                            <option value="ابتدائي">ابتدائي</option>
+                            <option value="متوسط">متوسط</option>
+                            <option value="ثانوي">ثانوي</option>
+                        </select>
+                    </div>
+                    <!-- حقول شرطية -->
+                    <div id="inspection_subject_div" class="mb-3" style="display: none;">
+                        <label for="inspection_subject" class="form-label">مادة التفتيش *</label>
+                        <input type="text" class="form-control" id="inspection_subject" name="inspection_subject">
+                    </div>
+                    <div id="specialty_div" class="mb-3" style="display: none;">
+                        <label for="specialty" class="form-label">التخصص *</label>
+                        <select class="form-select" id="specialty" name="specialty">
+                            <option value="">اختر...</option>
+                            <option value="إدارة المدارس الابتدائية">إدارة المدارس الابتدائية</option>
+                            <option value="التغذية المدرسية">التغذية المدرسية</option>
+                            <option value="التسيير المالي والمادي">التسيير المالي والمادي</option>
+                            <option value="إدارة المتوسطات">إدارة المتوسطات</option>
+                            <option value="إدارة الثانويات">إدارة الثانويات</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(1)">التالي</button>
+                </div>
+
+                <!-- القسم الثاني: تفاصيل العملية -->
+                <div id="section2" class="section section-2" style="display: none;">
+                    <h4 class="section-title">القسم الثاني: تفاصيل العملية</h4>
+                    <div class="mb-3">
+                        <label for="operation_topic" class="form-label">موضوع العملية المنجزة *</label>
+                        <input type="text" class="form-control" id="operation_topic" name="operation_topic" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="target_category" class="form-label">الفئة المستهدفة *</label>
+                        <select class="form-select" id="target_category" name="target_category" required>
+                            <option value="">اختر...</option>
+                            <option value="أساتذة المادة">أساتذة المادة</option>
+                            <option value="المدراء">المدراء</option>
+                            <option value="النظار والمشرفون العامون بالمتوسط">النظار والمشرفون العامون بالمتوسط</option>
+                            <option value="النظار">النظار</option>
+                            <option value="المربون المختصون">المربون المختصون</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(2)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(2)">التالي</button>
+                </div>
+
+                <!-- القسم الثالث: المستفيدون -->
+                <div id="section3" class="section section-3" style="display: none;">
+                    <h4 class="section-title">القسم الثالث: المستفيدون</h4>
+                    <div class="mb-3">
+                        <label for="male_beneficiaries" class="form-label">عدد المستفيدين ذكور *</label>
+                        <input type="number" class="form-control" id="male_beneficiaries" name="male_beneficiaries" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="female_beneficiaries" class="form-label">عدد المستفيدين إناث *</label>
+                        <input type="number" class="form-control" id="female_beneficiaries" name="female_beneficiaries" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(3)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(3)">التالي</button>
+                </div>
+
+                <!-- القسم الرابع: التواريخ والمؤسسة -->
+                <div id="section4" class="section section-4" style="display: none;">
+                    <h4 class="section-title">القسم الرابع: التواريخ والمؤسسة</h4>
+                    <div class="mb-3">
+                        <label for="start_date" class="form-label">تاريخ بداية العملية *</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">تاريخ نهاية العملية *</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="days_count" class="form-label">عدد الأيام *</label>
+                        <input type="number" class="form-control" id="days_count" name="days_count" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="institution" class="form-label">المؤسسة المستقبلة *</label>
+                        <input type="text" class="form-control" id="institution" name="institution" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inspector_name" class="form-label">اسم ولقب المفتش *</label>
+                        <input type="text" class="form-control" id="inspector_name" name="inspector_name" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(4)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(4)">التالي</button>
+                </div>
+
+                <!-- سؤال شرطي: الملتقيات -->
+                <div id="meeting_participation_question" class="section section-5" style="display: none;">
+                    <h4 class="section-title">القسم الخامس: الملتقيات الوطنية والجهوية</h4>
+                    <div class="mb-3">
+                        <label class="form-label">هل شاركتم في الملتقيات الوطنية والجهوية؟ *</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="meeting_participation" id="meeting_yes" value="نعم" required>
+                            <label class="form-check-label" for="meeting_yes">نعم</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="meeting_participation" id="meeting_no" value="لا">
+                            <label class="form-check-label" for="meeting_no">لا</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(5)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(5)">التالي</button>
+                </div>
+
+                <!-- القسم الخامس: تفاصيل الملتقى -->
+                <div id="section5" class="section section-5" style="display: none;">
+                    <h4 class="section-title">القسم الخامس: تفاصيل الملتقى</h4>
+                    <div class="mb-3">
+                        <label for="meeting_address" class="form-label">عنوان الملتقى *</label>
+                        <input type="text" class="form-control" id="meeting_address" name="meeting_address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="meeting_start_date" class="form-label">تاريخ بداية الملتقى *</label>
+                        <input type="date" class="form-control" id="meeting_start_date" name="meeting_start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="meeting_end_date" class="form-label">تاريخ نهاية الملتقى *</label>
+                        <input type="date" class="form-control" id="meeting_end_date" name="meeting_end_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="meeting_days_count" class="form-label">عدد أيام الملتقى *</label>
+                        <input type="number" class="form-control" id="meeting_days_count" name="meeting_days_count" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="participation_role" class="form-label">صفة المشاركة في الملتقى *</label>
+                        <input type="text" class="form-control" id="participation_role" name="participation_role" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(6)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(6)">التالي</button>
+                </div>
+
+                <!-- سؤال شرطي: التغطية المالية -->
+                <div id="financial_coverage_question" class="section section-6" style="display: none;">
+                    <h4 class="section-title">القسم السادس: التغطية المالية</h4>
+                    <div class="mb-3">
+                        <label class="form-label">هل كانت بتغطية مالية؟ *</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="financial_coverage" id="financial_yes" value="نعم" required>
+                            <label class="form-check-label" for="financial_yes">نعم</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="financial_coverage" id="financial_no" value="لا">
+                            <label class="form-check-label" for="financial_no">لا</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(7)">السابق</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection(7)">التالي</button>
+                </div>
+
+                <!-- القسم السادس: تفاصيل التغطية المالية -->
+                <div id="section6" class="section section-6" style="display: none;">
+                    <h4 class="section-title">القسم السادس: تفاصيل التغطية المالية</h4>
+                    <div class="mb-3">
+                        <label for="compensation_amount" class="form-label">مبلغ التعويضات *</label>
+                        <input type="number" class="form-control" id="compensation_amount" name="compensation_amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="educational_tools_amount" class="form-label">مبلغ الوسائل التربوية *</label>
+                        <input type="number" class="form-control" id="educational_tools_amount" name="educational_tools_amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="meals_amount" class="form-label">مبلغ الإطعام *</label>
+                        <input type="number" class="form-control" id="meals_amount" name="meals_amount" required>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="prevSection(8)">السابق</button>
+                    <button type="submit" class="btn btn-success">إرسال</button>
+                </div>
+            </form>
+            
+            <div id="message" class="alert" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sections = ['section1', 'section2', 'section3', 'section4', 'meeting_participation_question', 'section5', 'financial_coverage_question', 'section6'];
+        let currentSection = 0;
+        const totalSections = sections.length;
+
+        function updateProgress() {
+            const progress = (currentSection / (totalSections - 1)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').innerText = Math.round(progress) + '%';
+        }
+
+        function showSection(index) {
+            sections.forEach((id, i) => {
+                document.getElementById(id).style.display = i === index ? 'block' : 'none';
+            });
+            updateProgress();
+        }
+
+        function updateConditionalFields() {
+            const general = document.getElementById('general_specialty').value;
+            const inspectionSubjectDiv = document.getElementById('inspection_subject_div');
+            const specialtyDiv = document.getElementById('specialty_div');
+            
+            if (general === 'بيداغوجيا') {
+                inspectionSubjectDiv.style.display = 'block';
+                specialtyDiv.style.display = 'none';
+                document.getElementById('inspection_subject').required = true;
+                document.getElementById('specialty').required = false;
+                document.getElementById('specialty').value = '';
+            } else if (general === 'إدارة لكل المراحل /التغذية / تسيير مالي ومادي (متوسط ثانوي)') {
+                inspectionSubjectDiv.style.display = 'none';
+                specialtyDiv.style.display = 'block';
+                document.getElementById('inspection_subject').required = false;
+                document.getElementById('specialty').required = true;
+                document.getElementById('inspection_subject').value = '';
+            } else {
+                inspectionSubjectDiv.style.display = 'none';
+                specialtyDiv.style.display = 'none';
+                document.getElementById('inspection_subject').required = false;
+                document.getElementById('specialty').required = false;
+                document.getElementById('inspection_subject').value = '';
+                document.getElementById('specialty').value = '';
+            }
+        }
+
+        async function submitForm() {
+            const form = document.getElementById('myForm');
+            const messageDiv = document.getElementById('message');
+            
+            // التحقق من الحقول المطلوبة في جميع الأقسام المرئية
+            const visibleSections = sections.filter((_, i) => document.getElementById(sections[i]).style.display === 'block');
+            for (let section of visibleSections) {
+                if (!validateSection(sections.indexOf(section) + 1)) {
+                    messageDiv.innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة في القسم الحالي.</div>';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+                    return false;
+                }
+            }
+
+            try {
+                const formData = new FormData(form);
+                console.log('Submitting form data:', Object.fromEntries(formData)); // تصحيح أخطاء
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors' // لتجنب مشاكل CORS
+                });
+                // ملاحظة: مع 'no-cors'، لا يمكن التحقق من response.ok، لذا نعتمد على السجل
+                console.log('Submission response:', response);
+                messageDiv.innerHTML = '<div class="alert alert-success">تم إرسال البيانات بنجاح!</div>';
+                messageDiv.style.display = 'block';
+                form.reset();
+                currentSection = 0;
+                updateConditionalFields();
+                setTimeout(() => { 
+                    messageDiv.style.display = 'none';
+                    window.location.href = 'thankyou.html';
+                }, 2000);
+                return true;
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="alert alert-danger">فشل الإرسال: ' + error.message + '</div>';
+                messageDiv.style.display = 'block';
+                console.error('Submission error:', error);
+                return false;
+            }
+        }
+
+        function nextSection(current) {
+            if (validateSection(current)) {
+                document.getElementById('message').style.display = 'none';
+                if (current === 1) {
+                    updateConditionalFields();
+                } else if (current === 5) { // بعد سؤال الملتقيات
+                    const participation = document.querySelector('input[name="meeting_participation"]:checked');
+                    if (participation && participation.value === 'نعم') {
+                        document.getElementById('section5').style.display = 'block';
+                    } else {
+                        document.getElementById('section5').style.display = 'none';
+                        if (currentSection + 1 === 5 && participation && participation.value === 'لا') {
+                            currentSection++; // تخطي القسم الخامس
+                        }
+                    }
+                } else if (current === 7) { // بعد سؤال التغطية المالية
+                    const coverage = document.querySelector('input[name="financial_coverage"]:checked');
+                    if (coverage && coverage.value === 'نعم') {
+                        document.getElementById('section6').style.display = 'block';
+                    } else {
+                        document.getElementById('section6').style.display = 'none';
+                        if (currentSection + 1 === 7 && coverage && coverage.value === 'لا') {
+                            submitForm(); // إرسال النموذج مباشرة
+                            return;
+                        }
+                    }
+                }
+                currentSection++;
+                showSection(currentSection);
+            } else {
+                document.getElementById('message').innerHTML = '<div class="alert alert-warning">يرجى ملء جميع الحقول المطلوبة.</div>';
+                document.getElementById('message').style.display = 'block';
+                setTimeout(() => { document.getElementById('message').style.display = 'none'; }, 3000);
+            }
+        }
+
+        function prevSection(current) {
+            currentSection--;
+            showSection(currentSection);
+            document.getElementById('message').style.display = 'none';
+            if (current === 1) {
+                updateConditionalFields();
+            }
+        }
+
+        function validateSection(section) {
+            const currentSectionDiv = document.getElementById(sections[section - 1]);
+            const requiredInputs = currentSectionDiv.querySelectorAll('[required]');
+            let isValid = true;
+            for (let input of requiredInputs) {
+                if (!input.value) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            }
+            return isValid;
+        }
+
+        document.getElementById('general_specialty').addEventListener('change', updateConditionalFields);
+
+        document.getElementById('myForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await submitForm();
+        });
+
+        updateConditionalFields();
+        showSection(0);
+    </script>
+</body>
+</html>
